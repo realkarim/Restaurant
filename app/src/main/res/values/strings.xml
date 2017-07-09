@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Restaurant</string>
+
+    <!--API URLs-->
+    <string name="customers_url">https://s3-eu-west-1.amazonaws.com/quandoo-assessment/customer-list.json</string>
+
 </resources>

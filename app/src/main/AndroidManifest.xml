@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.realkarim.restaurant">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".dagger.MyApplication"
         android:allowBackup="true"
@@ -10,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".customers.CustomersActivity">
+        <activity
+            android:name=".customers.CustomersActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
