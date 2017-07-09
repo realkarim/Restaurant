@@ -1,6 +1,6 @@
 package com.realkarim.restaurant.dagger;
 
-import com.realkarim.restaurant.CustomersActivity;
+import com.realkarim.restaurant.customers.CustomersFragment;
 
 import javax.inject.Singleton;
 
@@ -13,5 +13,5 @@ import dagger.Component;
 @Singleton
 @Component(modules = {AppModule.class})
 public interface BaseComponent {
-    void inject(CustomersActivity customersActivity);
+    void inject(CustomersFragment customersFragment);
 }

@@ -3,6 +3,8 @@ package com.realkarim.restaurant.dagger;
 import android.app.Application;
 import android.content.Context;
 
+import com.realkarim.restaurant.customers.CustomersPresenter;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -23,6 +25,13 @@ public class AppModule {
     @Singleton
     Context providesApplicationContext() {
         return mApplication;
+    }
+
+    @Provides
+    @Singleton
+    CustomersPresenter providesCustomersPresenter() {
+        CustomersPresenter customersPresenter = new CustomersPresenter();
+        return customersPresenter;
     }
 
 }
