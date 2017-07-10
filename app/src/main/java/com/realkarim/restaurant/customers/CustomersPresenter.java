@@ -1,6 +1,9 @@
 package com.realkarim.restaurant.customers;
 
+import com.realkarim.restaurant.network.Customer;
 import com.realkarim.restaurant.network.DataRequester;
+import com.realkarim.restaurant.utilities.HelperFunctions;
+import com.realkarim.restaurant.utilities.PrefUtilsInterface;
 
 import java.util.ArrayList;
 
@@ -11,11 +14,14 @@ import java.util.ArrayList;
 public class CustomersPresenter implements CustomersContract.Presenter {
 
     private CustomersContract.View view;
-
     private DataRequester dataRequester;
+    private PrefUtilsInterface prefUtilsInterface;
 
-    public CustomersPresenter(DataRequester dataRequester) {
+    private String ERROR_PROCESSING_DATA = "Error processing data!";
+
+    public CustomersPresenter(DataRequester dataRequester, PrefUtilsInterface prefUtilsInterface) {
         this.dataRequester = dataRequester;
+        this.prefUtilsInterface = prefUtilsInterface;
     }
 
     @Override
@@ -28,8 +34,15 @@ public class CustomersPresenter implements CustomersContract.Presenter {
         // Fetch customers data
         dataRequester.requestCustomersData(new DataRequester.ResponseCallback() {
             @Override
-            public void onDataReceived(ArrayList arrayList) {
-                view.onCustomersDataReceived(arrayList);
+            public void onDataReceived(String arrayList) {
+                ArrayList<Customer> customers = HelperFunctions.parseCustomersData(arrayList);
+                if(customers == null)
+                    view.showMessage(ERROR_PROCESSING_DATA);
+                else {
+                    // Save and return data
+                    prefUtilsInterface.setCustomersData(arrayList);
+                    view.onCustomersDataReceived(customers);
+                }
             }
 
             @Override

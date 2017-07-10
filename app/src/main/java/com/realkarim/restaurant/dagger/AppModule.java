@@ -9,6 +9,8 @@ import com.google.gson.Gson;
 import com.realkarim.restaurant.customers.CustomersPresenter;
 import com.realkarim.restaurant.network.DataRequester;
 import com.realkarim.restaurant.tables.TablesPresenter;
+import com.realkarim.restaurant.utilities.PrefUtils;
+import com.realkarim.restaurant.utilities.PrefUtilsInterface;
 
 import javax.inject.Singleton;
 
@@ -35,15 +37,15 @@ public class AppModule {
 
     @Provides
     @Singleton
-    CustomersPresenter providesCustomersPresenter(DataRequester dataRequester) {
-        CustomersPresenter customersPresenter = new CustomersPresenter(dataRequester);
+    CustomersPresenter providesCustomersPresenter(DataRequester dataRequester, PrefUtilsInterface prefUtilsInterface) {
+        CustomersPresenter customersPresenter = new CustomersPresenter(dataRequester, prefUtilsInterface);
         return customersPresenter;
     }
 
     @Provides
     @Singleton
-    TablesPresenter providesTablesPresenter(DataRequester dataRequester) {
-        TablesPresenter tablesPresenter = new TablesPresenter(dataRequester);
+    TablesPresenter providesTablesPresenter(DataRequester dataRequester, PrefUtilsInterface prefUtilsInterface) {
+        TablesPresenter tablesPresenter = new TablesPresenter(dataRequester, prefUtilsInterface);
         return tablesPresenter;
     }
 
@@ -63,9 +65,15 @@ public class AppModule {
     }
 
     @Provides
-    DataRequester providesDataRequester(Context context, OkHttpClient okHttpClient, Handler handler, Gson gson) {
-        DataRequester dataRequester = new DataRequester(context, okHttpClient, handler, gson);
+    DataRequester providesDataRequester(Context context, OkHttpClient okHttpClient, Handler handler, Gson gson, PrefUtilsInterface prefUtilsInterface) {
+        DataRequester dataRequester = new DataRequester(context, okHttpClient, handler, gson, prefUtilsInterface);
         return dataRequester;
+    }
+
+    @Provides
+    PrefUtilsInterface providesPrefUtilsInterface(Context context) {
+        PrefUtils prefUtils = new PrefUtils(context);
+        return prefUtils;
     }
 
 }

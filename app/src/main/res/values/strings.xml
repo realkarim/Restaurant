@@ -4,6 +4,15 @@
     <string name="available">Available</string>
     <string name="reserved">Reserved</string>
 
+    <!--API-->
+    <string name="no_internet">No Internet Connection!</string>
+    <string name="error_processing">Error processing data!</string>
+    <string name="error_fetching">Error fetching data!</string>
+
+    <!--Preferences-->
+    <string name="customers_key">customers_key</string>
+    <string name="tables_key">tables_key</string>
+
     <!--API URLs-->
     <string name="customers_url">https://s3-eu-west-1.amazonaws.com/quandoo-assessment/customer-list.json</string>
     <string name="tables_url">https://s3-eu-west-1.amazonaws.com/quandoo-assessment/table-map.json</string>

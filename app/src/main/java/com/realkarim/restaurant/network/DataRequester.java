@@ -7,6 +7,9 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.realkarim.restaurant.R;
+import com.realkarim.restaurant.utilities.HelperFunctions;
+import com.realkarim.restaurant.utilities.PrefUtils;
+import com.realkarim.restaurant.utilities.PrefUtilsInterface;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,16 +33,25 @@ public class DataRequester {
     private OkHttpClient okHttpClient;
     private Handler mainHandler;
     private Gson gson;
+    private PrefUtilsInterface prefUtilsInterface;
 
-    public DataRequester(Context context, OkHttpClient okHttpClient, Handler mainHandler, Gson gson) {
+    public DataRequester(Context context, OkHttpClient okHttpClient, Handler mainHandler, Gson gson, PrefUtilsInterface prefUtilsInterface) {
         this.context = context;
         this.okHttpClient = okHttpClient;
         this.mainHandler = mainHandler;
         this.gson = gson;
+        this.prefUtilsInterface = prefUtilsInterface;
     }
 
     public void requestCustomersData(final ResponseCallback responseCallback) {
-
+        // Check for internet connection
+        if (!HelperFunctions.isConnectedToInternet(context)) {
+            // Notify user about the internet problem
+            responseCallback.onError(context.getString(R.string.no_internet));
+            // Return saved data if available
+            responseCallback.onDataReceived(prefUtilsInterface.getCustomersData());
+            return;
+        }
         // Create URL
         String baseURL = context.getString(R.string.customers_url);
         Uri builtUri = Uri.parse(baseURL)
@@ -69,28 +81,29 @@ public class DataRequester {
             public void onResponse(Call call, final Response response) throws IOException {
 
                 final Integer responseCode = response.code();
-
-                // Parse response
-                String responseString = response.body().string();
-                final ArrayList<Customer> customers = parseCustomersData(responseString);
+                final String responseString = response.body().string();
 
                 mainHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         // Return response
                         if (responseCode == 200) {
-                            responseCallback.onDataReceived(customers);
+                            responseCallback.onDataReceived(responseString);
                         } else
                             responseCallback.onError("Error fetching customers data!");
                     }
                 });
             }
         });
-
     }
 
     public void requestTablesData(final ResponseCallback responseCallback) {
-
+        // Check for internet connection
+        if (!HelperFunctions.isConnectedToInternet(context)) {
+            // Notify user about the internet problem
+            responseCallback.onError(context.getString(R.string.no_internet));
+            return;
+        }
         // Create URL
         String baseURL = context.getString(R.string.tables_url);
         Uri builtUri = Uri.parse(baseURL)
@@ -120,26 +133,16 @@ public class DataRequester {
             public void onResponse(Call call, final Response response) throws IOException {
 
                 final Integer responseCode = response.code();
-                final ArrayList<Boolean> customers = new ArrayList<>();
-
-                try {
-                    // Parse response
-                    String responseString = response.body().string();
-                    JSONArray jsonArray = new JSONArray(responseString);
-                    for (int i = 0; i < jsonArray.length(); i++)
-                        customers.add(jsonArray.getBoolean(i));
-                } catch (JSONException e) {
-                    responseCallback.onError("Error processing data!");
-                }
+                final String responseString = response.body().string();
 
                 mainHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         // Return response
                         if (responseCode == 200) {
-                            responseCallback.onDataReceived(customers);
+                            responseCallback.onDataReceived(responseString);
                         } else
-                            responseCallback.onError("Error fetching customers data!");
+                            responseCallback.onError(context.getString(R.string.error_fetching));
                     }
                 });
             }
@@ -148,25 +151,9 @@ public class DataRequester {
     }
 
     public interface ResponseCallback {
-        void onDataReceived(ArrayList arrayList);
+        void onDataReceived(String response);
 
         void onError(String error);
     }
 
-    private ArrayList<Customer> parseCustomersData(String array) {
-        ArrayList<Customer> customersArrayList = null;
-        try {
-            JSONArray jsonArray = new JSONArray(array);
-            customersArrayList = new ArrayList<>();
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                Customer customer = gson.fromJson("" + jsonArray.get(i), Customer.class);
-                customersArrayList.add(customer);
-            }
-
-        } catch (JSONException e) {
-            Log.e("Data Requester", e.getMessage());
-        }
-        return customersArrayList;
-    }
 }
