@@ -4,11 +4,11 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.ContactsContract;
 
 import com.google.gson.Gson;
 import com.realkarim.restaurant.customers.CustomersPresenter;
 import com.realkarim.restaurant.network.DataRequester;
+import com.realkarim.restaurant.tables.TablesPresenter;
 
 import javax.inject.Singleton;
 
@@ -41,6 +41,13 @@ public class AppModule {
     }
 
     @Provides
+    @Singleton
+    TablesPresenter providesTablesPresenter(DataRequester dataRequester) {
+        TablesPresenter tablesPresenter = new TablesPresenter(dataRequester);
+        return tablesPresenter;
+    }
+
+    @Provides
     Gson providesGson() {
         return new Gson();
     }
@@ -56,7 +63,7 @@ public class AppModule {
     }
 
     @Provides
-    DataRequester providesDataRequester(Context context, OkHttpClient okHttpClient, Handler handler, Gson gson){
+    DataRequester providesDataRequester(Context context, OkHttpClient okHttpClient, Handler handler, Gson gson) {
         DataRequester dataRequester = new DataRequester(context, okHttpClient, handler, gson);
         return dataRequester;
     }

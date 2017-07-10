@@ -1,5 +1,6 @@
 package com.realkarim.restaurant.customers;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,10 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.realkarim.restaurant.R;
 import com.realkarim.restaurant.dagger.MyApplication;
 import com.realkarim.restaurant.network.Customer;
+import com.realkarim.restaurant.tables.TablesActivity;
 
 import java.util.ArrayList;
 
@@ -70,7 +73,7 @@ public class CustomersFragment extends Fragment implements CustomersContract.Vie
 
     @Override
     public void showMessage(String message) {
-
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 
     class CustomersRecyclerViewAdapter extends RecyclerView.Adapter<CustomersRecyclerViewAdapter.ViewHolder> {
@@ -108,7 +111,7 @@ public class CustomersFragment extends Fragment implements CustomersContract.Vie
             notifyDataSetChanged();
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
+        class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
             public TextView firstName;
             public TextView lastName;
             public TextView customer_id;
@@ -118,6 +121,14 @@ public class CustomersFragment extends Fragment implements CustomersContract.Vie
                 firstName = (TextView) v.findViewById(R.id.first_name);
                 lastName = (TextView) v.findViewById(R.id.last_name);
                 customer_id = (TextView) v.findViewById(R.id.customer_id);
+
+                v.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), TablesActivity.class);
+                startActivity(intent);
             }
         }
     }
