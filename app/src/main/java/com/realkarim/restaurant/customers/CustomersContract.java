@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * Created by Karim Mostafa on 7/9/17.
  */
 
-interface CustomersContract {
+public interface CustomersContract {
     interface View {
 
         void onCustomersDataReceived(ArrayList data);
