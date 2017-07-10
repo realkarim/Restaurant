@@ -1,5 +1,8 @@
 package com.realkarim.restaurant.customers;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,7 +18,13 @@ import android.widget.Toast;
 import com.realkarim.restaurant.R;
 import com.realkarim.restaurant.dagger.MyApplication;
 import com.realkarim.restaurant.network.Customer;
+import com.realkarim.restaurant.scheduler.AlarmReceiver;
+import com.realkarim.restaurant.scheduler.TablesUpdate;
 import com.realkarim.restaurant.tables.TablesActivity;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
@@ -38,6 +47,12 @@ public class CustomersFragment extends Fragment implements CustomersContract.Vie
 
     private RecyclerView.LayoutManager mLayoutManager;
     private CustomersRecyclerViewAdapter customersRecyclerViewAdapter;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setUpBroadCastReceiver();
+    }
 
     @Nullable
     @Override
@@ -74,6 +89,36 @@ public class CustomersFragment extends Fragment implements CustomersContract.Vie
     @Override
     public void showMessage(String message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    public void setUpBroadCastReceiver() {
+        // Retrieve a PendingIntent that will perform a broadcast
+        Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent, 0);
+
+        AlarmManager manager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        int interval = 10 * 60 * 1000;
+
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
+//        Toast.makeText(getActivity(), "Alarm Set", Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onTablesUpdate(TablesUpdate update) {
+        setUpBroadCastReceiver();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     class CustomersRecyclerViewAdapter extends RecyclerView.Adapter<CustomersRecyclerViewAdapter.ViewHolder> {

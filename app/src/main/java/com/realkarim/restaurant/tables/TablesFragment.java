@@ -1,5 +1,9 @@
 package com.realkarim.restaurant.tables;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,8 +17,14 @@ import android.widget.Toast;
 
 import com.realkarim.restaurant.R;
 import com.realkarim.restaurant.dagger.MyApplication;
+import com.realkarim.restaurant.scheduler.AlarmReceiver;
+import com.realkarim.restaurant.scheduler.TablesUpdate;
 import com.realkarim.restaurant.utilities.HelperFunctions;
 import com.realkarim.restaurant.utilities.PrefUtilsInterface;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
@@ -75,6 +85,23 @@ public class TablesFragment extends Fragment implements TablesContract.View {
     @Override
     public void showMessage(String message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onTablesUpdate(TablesUpdate update) {
+        onTablesDataReceived(update.data);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     class TablesRecyclerViewAdapter extends RecyclerView.Adapter<TablesRecyclerViewAdapter.ViewHolder> {

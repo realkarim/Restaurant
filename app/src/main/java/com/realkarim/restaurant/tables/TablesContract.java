@@ -1,5 +1,8 @@
 package com.realkarim.restaurant.tables;
 
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**

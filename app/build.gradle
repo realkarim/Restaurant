@@ -47,4 +47,8 @@ dependencies {
 
     // Gson
     compile 'com.google.code.gson:gson:2.7'
+
+    // Eventbus
+    compile 'org.greenrobot:eventbus:3.0.0'
+
 }

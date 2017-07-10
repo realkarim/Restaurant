@@ -1,6 +1,5 @@
 package com.realkarim.restaurant.tables;
 
-import com.realkarim.restaurant.R;
 import com.realkarim.restaurant.network.DataRequester;
 import com.realkarim.restaurant.utilities.HelperFunctions;
 import com.realkarim.restaurant.utilities.PrefUtilsInterface;
@@ -42,7 +41,7 @@ public class TablesPresenter implements TablesContract.Presenter {
             public void onDataReceived(String arrayList) {
                 final ArrayList<Boolean> tables = HelperFunctions.parseTablesData(arrayList);
 
-                if(tables == null)
+                if (tables == null)
                     view.showMessage(ERROR_PROCESSING_DATA);
                 else {
                     // Save and return data
