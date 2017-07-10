@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.realkarim.restaurant.R;
 import com.realkarim.restaurant.dagger.MyApplication;
 import com.realkarim.restaurant.utilities.HelperFunctions;
+import com.realkarim.restaurant.utilities.PrefUtilsInterface;
 
 import java.util.ArrayList;
 
@@ -30,6 +31,9 @@ public class TablesFragment extends Fragment implements TablesContract.View {
 
     @Inject
     TablesPresenter tablesPresenter;
+
+    @Inject
+    PrefUtilsInterface prefUtilsInterface;
 
     @BindView(R.id.tables_recycler_view)
     RecyclerView tablesRecyclerView;
@@ -76,6 +80,7 @@ public class TablesFragment extends Fragment implements TablesContract.View {
     class TablesRecyclerViewAdapter extends RecyclerView.Adapter<TablesRecyclerViewAdapter.ViewHolder> {
 
         ArrayList<Boolean> tables;
+        private Integer selectedTable = -1;
 
         TablesRecyclerViewAdapter() {
             tables = new ArrayList<>();
@@ -112,12 +117,36 @@ public class TablesFragment extends Fragment implements TablesContract.View {
             notifyDataSetChanged();
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
+        class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             public TextView table;
 
             public ViewHolder(View v) {
                 super(v);
                 table = (TextView) v.findViewById(R.id.table);
+                v.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v) {
+                Integer position = getAdapterPosition();
+                if (position != selectedTable && tables.get(position) == false)
+                    showMessage(getString(R.string.isAlreadyReserved));
+                else {
+                    if (selectedTable != -1) {
+                        tables.set(selectedTable, true);
+                        notifyItemChanged(selectedTable);
+                        if (position == selectedTable) {
+                            selectedTable = -1;
+                            return;
+                        }
+                    }
+                    tables.set(position, false);
+                    selectedTable = position;
+                    notifyItemChanged(position);
+
+                    // Save updated table
+                    prefUtilsInterface.setTablesData(HelperFunctions.convertTablesDataToString(tables));
+                }
             }
         }
     }

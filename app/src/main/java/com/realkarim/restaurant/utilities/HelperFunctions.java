@@ -70,4 +70,13 @@ public class HelperFunctions {
 
         return tables;
     }
+
+    public static String convertTablesDataToString(ArrayList<Boolean> arrayList) {
+        JSONArray jsonArray = new JSONArray();
+        for (int i = 0; i < arrayList.size(); i++) {
+            jsonArray.put(arrayList.get(i));
+        }
+        String dataString = jsonArray.toString();
+        return dataString;
+    }
 }

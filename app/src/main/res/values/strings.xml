@@ -3,6 +3,7 @@
 
     <string name="available">Available</string>
     <string name="reserved">Reserved</string>
+    <string name="isAlreadyReserved">Table already reserved!</string>
 
     <!--API-->
     <string name="no_internet">No Internet Connection!</string>
